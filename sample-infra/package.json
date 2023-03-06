@@ -1,0 +1,11 @@
+{
+    "name": "pulumi-import-account-scraper-sample-infra-google",
+    "main": "index.ts",
+    "devDependencies": {
+        "@types/node": "^16"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "^3.0.0",
+        "@pulumi/gcp": "^6.0.0"
+    }
+}
