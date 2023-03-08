@@ -452,7 +452,7 @@
     },
     {
       "type": "gcp:compute/instance:Instance",
-      "name": "test2-wireguard-instance-1436674",
+      "name": "test2-wireguard-instance-1436674-1",
       "id": "pulumi-ce-team/australia-southeast2-a/test2-wireguard-instance-1436674"
     },
     {
@@ -517,7 +517,7 @@
     },
     {
       "type": "gcp:compute/instance:Instance",
-      "name": "instance-5807a0d",
+      "name": "instance-5807a0d-1",
       "id": "pulumi-ce-team/us-central1-a/instance-5807a0d"
     },
     {
@@ -582,7 +582,7 @@
     },
     {
       "type": "gcp:compute/targetPool:TargetPool",
-      "name": "aba25a55d5e684826acb4827cbed47c9",
+      "name": "aba25a55d5e684826acb4827cbed47c9-1",
       "id": "us-central1/aba25a55d5e684826acb4827cbed47c9"
     },
     {
@@ -602,7 +602,7 @@
     },
     {
       "type": "gcp:compute/targetPool:TargetPool",
-      "name": "ac414228f9af1452d9c749260f268b7b",
+      "name": "ac414228f9af1452d9c749260f268b7b-1",
       "id": "us-central1/ac414228f9af1452d9c749260f268b7b"
     },
     {
