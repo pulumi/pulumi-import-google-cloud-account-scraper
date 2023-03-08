@@ -186,6 +186,11 @@
       "id": "us-west2-a/webserver-0-0-c31848c"
     },
     {
+      "type": "gcp:projects/iAMPolicy:IAMPolicy",
+      "name": "pulumi-ce-team-iampolicy",
+      "id": "projects/pulumi-ce-team"
+    },
+    {
       "type": "gcp:compute/disk:Disk",
       "name": "webserver-0-0-e166c3a",
       "id": "us-west2-a/webserver-0-0-e166c3a"
@@ -601,14 +606,244 @@
       "id": "us-central1/ac414228f9af1452d9c749260f268b7b"
     },
     {
-      "type": "gcp:logging/projectSink:ProjectSink",
-      "name": "a-required",
-      "id": "projects/438338752289/sinks/a-required"
+      "type": "gcp:serviceAccount/account:Account",
+      "name": "demos-weekly-test",
+      "id": "demos-weekly-test@pulumi-ce-team.iam.gserviceaccount.com"
     },
     {
-      "type": "gcp:logging/projectSink:ProjectSink",
-      "name": "a-default",
-      "id": "projects/438338752289/sinks/a-default"
+      "type": "gcp:serviceAccount/account:Account",
+      "name": "aureq-test-sa",
+      "id": "aureq-test-sa@pulumi-ce-team.iam.gserviceaccount.com"
+    },
+    {
+      "type": "gcp:serviceAccount/account:Account",
+      "name": "tushar",
+      "id": "tushar@pulumi-ce-team.iam.gserviceaccount.com"
+    },
+    {
+      "type": "gcp:serviceAccount/account:Account",
+      "name": "codefresh-ci-cd-access",
+      "id": "codefresh-ci-cd-access@pulumi-ce-team.iam.gserviceaccount.com"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "demo-k8s-ts-nginx-6356eb8",
+      "id": "US/demo-k8s-ts-nginx-6356eb8"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "demo-k8s-ts-nginx-6356eb8-iampolicy",
+      "id": "b/demo-k8s-ts-nginx-6356eb8"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "asia.artifacts.pulumi-ce-team.appspot.com",
+      "id": "ASIA/asia.artifacts.pulumi-ce-team.appspot.com"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "asia.artifacts.pulumi-ce-team.appspot.com-iampolicy",
+      "id": "b/asia.artifacts.pulumi-ce-team.appspot.com"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "gcf-sources-438338752289-us-central1",
+      "id": "US-CENTRAL1/gcf-sources-438338752289-us-central1"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "gcf-sources-438338752289-us-central1-iampolicy",
+      "id": "b/gcf-sources-438338752289-us-central1"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "gcf-sources-438338752289-us-east1",
+      "id": "US-EAST1/gcf-sources-438338752289-us-east1"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "gcf-sources-438338752289-us-east1-iampolicy",
+      "id": "b/gcf-sources-438338752289-us-east1"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "gcf-sources-438338752289-us-east4",
+      "id": "US-EAST4/gcf-sources-438338752289-us-east4"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "gcf-sources-438338752289-us-east4-iampolicy",
+      "id": "b/gcf-sources-438338752289-us-east4"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "artifacts.pulumi-ce-team.appspot.com",
+      "id": "US/artifacts.pulumi-ce-team.appspot.com"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "artifacts.pulumi-ce-team.appspot.com-iampolicy",
+      "id": "b/artifacts.pulumi-ce-team.appspot.com"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "gcf-v2-sources-438338752289-europe-west1",
+      "id": "EUROPE-WEST1/gcf-v2-sources-438338752289-europe-west1"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "gcf-v2-sources-438338752289-europe-west1-iampolicy",
+      "id": "b/gcf-v2-sources-438338752289-europe-west1"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "phil-cosmic-test-oauth",
+      "id": "US/phil-cosmic-test-oauth"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "phil-cosmic-test-oauth-iampolicy",
+      "id": "b/phil-cosmic-test-oauth"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "mitch-selfhosted",
+      "id": "US/mitch-selfhosted"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "mitch-selfhosted-iampolicy",
+      "id": "b/mitch-selfhosted"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "gcf-sources-438338752289-europe-west2",
+      "id": "EUROPE-WEST2/gcf-sources-438338752289-europe-west2"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "gcf-sources-438338752289-europe-west2-iampolicy",
+      "id": "b/gcf-sources-438338752289-europe-west2"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "gcf-sources-438338752289-europe-west1",
+      "id": "EUROPE-WEST1/gcf-sources-438338752289-europe-west1"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "gcf-sources-438338752289-europe-west1-iampolicy",
+      "id": "b/gcf-sources-438338752289-europe-west1"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "us-west2-airflow-2e495e3-fa6253b7-bucket",
+      "id": "US-WEST2/us-west2-airflow-2e495e3-fa6253b7-bucket"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "us-west2-airflow-2e495e3-fa6253b7-bucket-iampolicy",
+      "id": "b/us-west2-airflow-2e495e3-fa6253b7-bucket"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "staging.pulumi-ce-team.appspot.com",
+      "id": "US/staging.pulumi-ce-team.appspot.com"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "staging.pulumi-ce-team.appspot.com-iampolicy",
+      "id": "b/staging.pulumi-ce-team.appspot.com"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "us-west2-airflow-5692738-c5f8c96c-bucket",
+      "id": "US-WEST2/us-west2-airflow-5692738-c5f8c96c-bucket"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "us-west2-airflow-5692738-c5f8c96c-bucket-iampolicy",
+      "id": "b/us-west2-airflow-5692738-c5f8c96c-bucket"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "gcf-sources-438338752289-us-west2",
+      "id": "US-WEST2/gcf-sources-438338752289-us-west2"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "gcf-sources-438338752289-us-west2-iampolicy",
+      "id": "b/gcf-sources-438338752289-us-west2"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "bucket-32dfc2d",
+      "id": "EUROPE-WEST1/bucket-32dfc2d"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "bucket-32dfc2d-iampolicy",
+      "id": "b/bucket-32dfc2d"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "mitchgerdisch-python-unit-testing-bucket-731c995",
+      "id": "US/mitchgerdisch-python-unit-testing-bucket-731c995"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "mitchgerdisch-python-unit-testing-bucket-731c995-iampolicy",
+      "id": "b/mitchgerdisch-python-unit-testing-bucket-731c995"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "pulumi-ce-team.appspot.com",
+      "id": "US/pulumi-ce-team.appspot.com"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "pulumi-ce-team.appspot.com-iampolicy",
+      "id": "b/pulumi-ce-team.appspot.com"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "eu.artifacts.pulumi-ce-team.appspot.com",
+      "id": "EU/eu.artifacts.pulumi-ce-team.appspot.com"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "eu.artifacts.pulumi-ce-team.appspot.com-iampolicy",
+      "id": "b/eu.artifacts.pulumi-ce-team.appspot.com"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "us.artifacts.pulumi-ce-team.appspot.com",
+      "id": "US/us.artifacts.pulumi-ce-team.appspot.com"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "us.artifacts.pulumi-ce-team.appspot.com-iampolicy",
+      "id": "b/us.artifacts.pulumi-ce-team.appspot.com"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "us-west2-airflow-bf5db84-87f2014c-bucket",
+      "id": "US-WEST2/us-west2-airflow-bf5db84-87f2014c-bucket"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "us-west2-airflow-bf5db84-87f2014c-bucket-iampolicy",
+      "id": "b/us-west2-airflow-bf5db84-87f2014c-bucket"
+    },
+    {
+      "type": "gcp:storage/bucket:Bucket",
+      "name": "us-west2-airflow-3be5969-c0e88aad-bucket",
+      "id": "US-WEST2/us-west2-airflow-3be5969-c0e88aad-bucket"
+    },
+    {
+      "type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
+      "name": "us-west2-airflow-3be5969-c0e88aad-bucket-iampolicy",
+      "id": "b/us-west2-airflow-3be5969-c0e88aad-bucket"
     }
   ]
 }

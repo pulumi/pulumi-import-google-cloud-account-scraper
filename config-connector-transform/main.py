@@ -35,6 +35,8 @@ skipped_resources = {}
 converted_resources = {}
 resources = []
 
+# TODO: Move these to inline lambdas once we're confident we never need more than in inline expression:
+
 
 def get_logging_log_sink_id(k8s_resource):
     return f"projects/{k8s_resource['spec']['projectRef']['external']}/sinks/{k8s_resource['metadata']['name']}"
@@ -42,6 +44,14 @@ def get_logging_log_sink_id(k8s_resource):
 
 def get_compute_instance_id(k8s_resource):
     return f"{k8s_resource['metadata']['annotations']['cnrm.cloud.google.com/project-id']}/{k8s_resource['spec']['zone']}/{k8s_resource['metadata']['name']}"
+
+
+def get_storage_bucket_id(k8s_resource):
+    return f"b/{k8s_resource['spec']['resourceRef']['external']}"
+
+
+def get_iam_service_account_id(k8s_resource):
+    return f"{k8s_resource['spec']['resourceID']}@{k8s_resource['metadata']['annotations']['cnrm.cloud.google.com/project-id']}.iam.gserviceaccount.com"
 
 
 resource_type_mappings = {
@@ -80,28 +90,47 @@ resource_type_mappings = {
     'ComputeSnapshot': {
         'pulumi_type': 'gcp:compute/snapshot:Snapshot'
     },
-    'LoggingLogSink': {
-        'pulumi_type': 'gcp:logging/projectSink:ProjectSink',
-        'get_id': get_logging_log_sink_id,
+    'IAMServiceAccount': {
+        'pulumi_type': 'gcp:serviceAccount/account:Account',
+        'get_id': get_iam_service_account_id,
     },
+    # TODO: These fail import with e.g. 'Preview failed: resource
+    # 'projects/438338752289/sinks/a-default' does not exist'. We need to figure
+    # out what actual cloud resources these represent and figure out whehter
+    # they actually need to be imported.
+    # 'LoggingLogSink': {
+    #     'pulumi_type': 'gcp:logging/projectSink:ProjectSink',
+    #     'get_id': get_logging_log_sink_id,
+    # },
+    'Service': {
+        'pulumi_type': 'gcp:cloudrunv2/service:Service',
+    },
+    'StorageBucket': {
+        'pulumi_type': 'gcp:storage/bucket:Bucket',
+    }
 }
 
 
-def get_storage_bucket_id(k8s_resource):
-    return f"b/{k8s_resource['spec']['resourceRef']['external']}"
+def get_iam_project_id(k8s_resource):
+    return k8s_resource['spec']['resourceRef']['external']
 
 
 iam_type_mappings = {
-    'IAMStorageBucket': {
+    'StorageBucket': {
         'pulumi_type': 'gcp:storage/bucketIAMPolicy:BucketIAMPolicy',
         'get_id': get_storage_bucket_id
     },
+    'Project': {
+        'pulumi_type': 'gcp:projects/iAMPolicy:IAMPolicy',
+        'get_id': get_iam_project_id
+    }
     # Additional mappings would go here.
 }
 
 
 def get_default_id(k8s_resource):
-    """Returns the default ID of an object, adding region and zone if they can be determined"""
+    """Returns the most common form of an ID of a Google Cloud resource, adding
+    region and zone if they can be determined"""
     id = ""
 
     if 'region' in k8s_resource['spec']:
@@ -152,6 +181,16 @@ def k8s_resource_to_pulumi_resource(k8s_resource):
             'id': iam_type_mappings[ref_type]['get_id'](k8s_resource),
         }
 
+    # The 'disabled' attribute is not specified unless it's true (in our sample input data, at least).
+    if k8s_type == 'IAMServiceAccount' and 'disabled' in k8s_resource['spec']:
+        print(
+            f"IAMServiceAccount '{k8s_resource['metadata']['name']}' is inactive and will be skipped.")
+        return None
+
+    if k8s_type == 'Service' and k8s_resource['apiVersion'].startswith('serviceusage'):
+        print(f"Resources of type 'Service' (Service Usage) do not map to an obvious Pulumi resource type and will be skipped.")
+        return None
+
     if k8s_type in resource_type_mappings:
         if 'get_id' in resource_type_mappings[k8s_type]:
             return {
@@ -166,11 +205,13 @@ def k8s_resource_to_pulumi_resource(k8s_resource):
             'id': get_default_id(k8s_resource),
         }
 
-    # TODO: Try automapping.
-    # TODO: Attempt to split along CamelCase and parse accordingly
+    # TODO: As a future improvement, try auto-mapping from the K8s type to the
+    # Pulumi type. We might attempt to split along CamelCase in the k8s type and
+    # and parse accordingly, e.g.:
     # k8s_type_camel_case_split = re.sub(
     #     '([A-Z][a-z]+)', r' \1', re.sub('([A-Z]+)', r' \1', k8s_type)).split()
 
+    print(f"No mapping found for K8s resource type '{k8s_type}'. Skipping.")
     return None
 
 
@@ -179,8 +220,7 @@ for doc in docs:
 
     if pulumi_resource is None:
         k8s_resource_type = doc['kind']
-        print(
-            f"Resource type '{k8s_resource_type}' could not be mapped to a Pulumi type. This resource will be omitted from the output.")
+
         if k8s_resource_type in skipped_resources:
             skipped_resources[k8s_resource_type] += 1
         else:

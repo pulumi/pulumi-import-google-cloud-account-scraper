@@ -17,3 +17,5 @@ pulumi stack rm dev --force -y || \
 ```bash
 pulumi stack rm dev --force -y
 ```
+
+- Deleted IAM members: <https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/guides/iam_deleted_members>
