@@ -11,7 +11,7 @@ Proof of concept for bulk import of Google Cloud resources into Pulumi.
 (pulumi stack rm dev --force -y || true) && \
   pulumi stack init dev && \
   pulumi config set gcp:project pulumi-ce-team && \
-  pulumi import -f ../config-connector-transform/pulumi-import.json -y -s dev -o output.ts
+  pulumi import -f ../config-connector-transform/pulumi-import.json -y -s dev -o index.ts --protect=false
 ```
 
 ```bash

@@ -104,3 +104,5 @@ dist
 .tern-port
 
 venv
+config-connector-transform/pulumi-import.json
+config-connector-transform/sample-output.yaml

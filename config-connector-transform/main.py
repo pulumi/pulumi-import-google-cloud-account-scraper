@@ -2,7 +2,6 @@ import argparse
 import yaml
 import pprint
 import json
-import re
 
 parser = argparse.ArgumentParser(
     prog='config-connector-transform',
@@ -22,6 +21,14 @@ parser.add_argument(
     help='The path to which the Pulumi import JSON should be written',
     required=True
 )
+
+parser.add_argument(
+    '-p',
+    '--project',
+    help='The default project to which assign to a resource if an explicit project cannot be found.',
+    required=True
+)
+
 
 # TODO: raise if the outfile already exists
 # TODO: Add a param to force overwrite of the outfile
@@ -52,6 +59,10 @@ def get_storage_bucket_id(k8s_resource):
 
 def get_iam_service_account_id(k8s_resource):
     return f"{k8s_resource['spec']['resourceID']}@{k8s_resource['metadata']['annotations']['cnrm.cloud.google.com/project-id']}.iam.gserviceaccount.com"
+
+
+def get_service_id(k8s_resource):
+    return f"{args.project}/{k8s_resource['metadata']['name']}"
 
 
 resource_type_mappings = {
@@ -103,7 +114,8 @@ resource_type_mappings = {
     #     'get_id': get_logging_log_sink_id,
     # },
     'Service': {
-        'pulumi_type': 'gcp:cloudrunv2/service:Service',
+        'pulumi_type': 'gcp:projects/service:Service',
+        'get_id': get_service_id,
     },
     'StorageBucket': {
         'pulumi_type': 'gcp:storage/bucket:Bucket',
@@ -187,9 +199,9 @@ def k8s_resource_to_pulumi_resource(k8s_resource):
             f"IAMServiceAccount '{k8s_resource['metadata']['name']}' is inactive and will be skipped.")
         return None
 
-    if k8s_type == 'Service' and k8s_resource['apiVersion'].startswith('serviceusage'):
-        print(f"Resources of type 'Service' (Service Usage) do not map to an obvious Pulumi resource type and will be skipped.")
-        return None
+    # if k8s_type == 'Service' and k8s_resource['apiVersion'].startswith('serviceusage'):
+    #     print(f"Resources of type 'Service' (Service Usage) do not map to an obvious Pulumi resource type and will be skipped.")
+    #     return None
 
     if k8s_type in resource_type_mappings:
         if 'get_id' in resource_type_mappings[k8s_type]:
