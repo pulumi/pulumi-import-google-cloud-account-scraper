@@ -1,3 +1,0 @@
-name: pulumi-import-google-cloud-import-target
-runtime: nodejs
-description: A minimal Google Cloud TypeScript Pulumi program

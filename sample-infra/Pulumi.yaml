@@ -1,3 +1,0 @@
-name: pulumi-import-account-scraper-sample-infra-google
-runtime: nodejs
-description: A TypeScript program to deploy a virtual machine on Google Cloud

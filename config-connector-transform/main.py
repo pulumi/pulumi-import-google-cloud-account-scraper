@@ -42,7 +42,8 @@ skipped_resources = {}
 converted_resources = {}
 resources = []
 
-# TODO: Move these to inline lambdas once we're confident we never need more than in inline expression:
+# TODO: Move these to inline lambdas once we're confident we never need more
+# than in inline expression:
 
 
 def get_logging_log_sink_id(k8s_resource):

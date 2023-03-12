@@ -1,8 +1,0 @@
-config:
-  gcp:project: pulumi-ce-team
-  gcp:region: us-central1
-  gcp:zone: us-central1-a
-  pulumi-import-account-scraper-sample-infra-google:instanceTag: webserver
-  pulumi-import-account-scraper-sample-infra-google:machineType: f1-micro
-  pulumi-import-account-scraper-sample-infra-google:osImage: debian-11
-  pulumi-import-account-scraper-sample-infra-google:servicePort: "80"
