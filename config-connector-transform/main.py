@@ -41,6 +41,7 @@ with open(args.infile, "r") as ymlfile:
 skipped_resources = {}
 converted_resources = {}
 resources = []
+default_id_counter = 0
 
 # TODO: Move these to inline lambdas once we're confident we never need more
 # than in inline expression:
@@ -143,6 +144,10 @@ def get_default_id(k8s_resource):
         id += f"{k8s_resource['spec']['location']}/"
 
     id += k8s_resource["spec"]["resourceID"]
+
+    if id == "":
+        id = k8s_resource["metadata"]["name"] + str(default_id_counter)
+        default_id_counter += 1
 
     return id
 
