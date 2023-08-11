@@ -232,14 +232,18 @@ def ensure_unique_name(pulumi_resource):
     if multiple resources have the same name due to
     https://github.com/pulumi/pulumi/issues/6032"""
 
-    for resource in resources:
-        if (
-            "name" in resource
-            and "name" in pulumi_resource
-            and resource["name"] == pulumi_resource["name"]
-        ):
-            pulumi_resource["name"] += "-1"
-            return
+    # If the pulumi_resource doesn't have a name field, just return
+    if "name" not in pulumi_resource:
+        return
+
+    base_name = pulumi_resource["name"]
+    counter = 1
+
+    while any(
+        resource.get("name") == pulumi_resource["name"] for resource in resources
+    ):
+        pulumi_resource["name"] = f"{base_name}-{counter}"
+        counter += 1
 
 
 for doc in docs:
