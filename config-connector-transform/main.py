@@ -232,10 +232,6 @@ def ensure_unique_name(pulumi_resource):
     if multiple resources have the same name due to
     https://github.com/pulumi/pulumi/issues/6032"""
 
-    # If the pulumi_resource doesn't have a name field, just return
-    if "name" not in pulumi_resource:
-        return
-
     base_name = pulumi_resource["name"]
     counter = 1
 
