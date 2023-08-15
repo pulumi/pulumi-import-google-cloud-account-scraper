@@ -85,7 +85,10 @@ def get_storage_bucket_id(k8s_resource):
 
 
 def get_iam_service_account_id(k8s_resource):
-    return f"{k8s_resource['spec']['resourceID']}@{k8s_resource['metadata']['annotations']['cnrm.cloud.google.com/project-id']}.iam.gserviceaccount.com"
+    if "spec" in k8s_resource and "resourceRef" in k8s_resource["spec"]:
+        return k8s_resource["spec"]["resourceRef"]["external"]
+    else:
+        return f"{k8s_resource['spec']['resourceID']}@{k8s_resource['metadata']['annotations']['cnrm.cloud.google.com/project-id']}.iam.gserviceaccount.com"
 
 
 def get_iam_policy_member_id(k8s_resource):
@@ -184,6 +187,10 @@ iam_type_mappings = {
         'pulumi_type': 'gcp:projects/iAMMember:IAMMember',
         'get_id': get_iam_policy_member_id,
     },
+    'IAMServiceAccount': {
+        'pulumi_type': 'gcp:serviceAccount/account:Account',
+        'get_id': get_iam_service_account_id,
+    },
     # Additional mappings would go here.
 }
 
@@ -192,6 +199,7 @@ def get_default_id(k8s_resource):
     """Returns the most common form of an ID of a Google Cloud resource, adding
     region and zone if they can be determined"""
     id = ""
+    global default_id_counter
 
     if 'region' in k8s_resource['spec']:
         id += f"{k8s_resource['spec']['region']}/"
@@ -199,7 +207,7 @@ def get_default_id(k8s_resource):
     if 'location' in k8s_resource['spec']:
         id += f"{k8s_resource['spec']['location']}/"
 
-    id += k8s_resource['spec']['resourceID']
+    id += k8s_resource['spec']['resourceID'] if 'resourceID' in k8s_resource['spec'] else ""
 
     if id == "":
         id = k8s_resource['metadata']['name'] + str(default_id_counter)
