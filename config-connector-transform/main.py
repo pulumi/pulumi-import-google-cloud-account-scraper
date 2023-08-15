@@ -4,29 +4,29 @@ import pprint
 import json
 
 parser = argparse.ArgumentParser(
-    prog="config-connector-transform",
-    description="Transforms a YAML output from config-connector to JSON suitable for the `pulumi import` command.",
+    prog='config-connector-transform',
+    description='Transforms a YAML output from config-connector to JSON suitable for the `pulumi import` command.'
 )
 
 parser.add_argument(
-    "-i",
-    "--infile",
-    help="The path to a YAML file containing config-connector output",
-    required=True,
+    '-i',
+    '--infile',
+    help='The path to a YAML file containing config-connector output',
+    required=True
 )
 
 parser.add_argument(
-    "-o",
-    "--outfile",
-    help="The path to which the Pulumi import JSON should be written",
-    required=True,
+    '-o',
+    '--outfile',
+    help='The path to which the Pulumi import JSON should be written',
+    required=True
 )
 
 parser.add_argument(
-    "-p",
-    "--project",
-    help="The default project to which assign to a resource if an explicit project cannot be found.",
-    required=True,
+    '-p',
+    '--project',
+    help='The default project to which assign to a resource if an explicit project cannot be found.',
+    required=True
 )
 
 
@@ -35,7 +35,7 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-with open(args.infile, "r") as ymlfile:
+with open(args.infile, 'r') as ymlfile:
     docs = list(yaml.load_all(ymlfile, yaml.Loader))
 
 skipped_resources = {}
@@ -108,93 +108,82 @@ broken_types = {
     # 'projects/438338752289/sinks/a-default' does not exist'. We need to figure
     # out what actual cloud resources these represent and figure out whehter
     # they actually need to be imported.
-    "ComputeBackendService": {
-        "pulumi_type": "gcp:compute/backendService:BackendService",
+    'ComputeBackendService': {
+        'pulumi_type': 'gcp:compute/backendService:BackendService',
     },
-    "LoggingLogSink": {
-        "pulumi_type": "gcp:logging/projectSink:ProjectSink",
-        "get_id": get_logging_log_sink_id,
+    'LoggingLogSink': {
+        'pulumi_type': 'gcp:logging/projectSink:ProjectSink',
+        'get_id': get_logging_log_sink_id,
     },
-}
-
-# TODO: TEMPORARY!! This is to simplify down the setup and hunt down the bugs in the `pulumi up` operation
-#   These are confirmed to work
-#   All of these should be in `resurce_type_mappings` below
-confirmed_types = {
-    "ArtifactRegistryRepository": {
-        "pulumi_type": "gcp:artifactregistry/repository:Repository"
-    },
-    "ComputeDisk": {
-        "pulumi_type": "gcp:compute/disk:Disk",
-        "get_id": get_compute_disk_id,
-    },
-    "ComputeFirewall": {"pulumi_type": "gcp:compute/firewall:Firewall"},
-    "ComputeForwardingRule": {
-        "pulumi_type": "gcp:compute/forwardingRule:ForwardingRule"
-    },
-    "ComputeHTTPHealthCheck": {
-        "pulumi_type": "gcp:compute/httpHealthCheck:HttpHealthCheck"
-    },
-    "ComputeInstance": {
-        "pulumi_type": "gcp:compute/instance:Instance",
-        "get_id": get_compute_instance_id,
-    },
-    "ComputeInstanceGroup": {
-        "pulumi_type": "gcp:compute/instanceGroup:InstanceGroup",
-        "get_id": get_compute_instance_id,
-    },
-    "ComputeInstanceTemplate": {
-        "pulumi_type": "gcp:compute/instanceTemplate:InstanceTemplate",
-        "get_id": get_compute_instance_template_id,
-    },
-    "ContainerNodePool": {
-        "pulumi_type": "gcp:container/nodePool:NodePool",
-        "get_id": get_container_node_pool_id,
-    },
-    "ComputeTargetPool": {"pulumi_type": "gcp:compute/targetPool:TargetPool"},
-    "IAMServiceAccount": {
-        "pulumi_type": "gcp:serviceAccount/account:Account",
-        "get_id": get_iam_service_account_id,
-    },
-    "Service": {
-        "pulumi_type": "gcp:projects/service:Service",
-        "get_id": get_service_id,
-    },
-    "StorageBucket": {
-        "pulumi_type": "gcp:storage/bucket:Bucket",
-    },
-}
-
-# TODO: TEMPORARY!! This is to simplify down the setup and hunt down the bugs in the `pulumi up` operation
-#   We don't know whether these are functional or not because we didn't have these resources in our cloud platform
-unknown_types = {
-    "ComputeNetwork": {"pulumi_type": "gcp:compute/network:Network"},
-    "ComputeSnapshot": {"pulumi_type": "gcp:compute/snapshot:Snapshot"},
-    "ComputeSubnetwork": {"pulumi_type": "gcp:compute/subnetwork:Subnetwork"},
 }
 
 resource_type_mappings = {
-    "ContainerCluster": {"pulumi_type": "gcp:container/cluster:Cluster"},
+    'ArtifactRegistryRepository': {
+        'pulumi_type': 'gcp:artifactregistry/repository:Repository'
+    },
+    'ComputeDisk': {
+        'pulumi_type': 'gcp:compute/disk:Disk',
+        'get_id': get_compute_disk_id,
+    },
+    'ComputeFirewall': {'pulumi_type': 'gcp:compute/firewall:Firewall'},
+    'ComputeForwardingRule': {
+        'pulumi_type': 'gcp:compute/forwardingRule:ForwardingRule'
+    },
+    'ComputeHTTPHealthCheck': {
+        'pulumi_type': 'gcp:compute/httpHealthCheck:HttpHealthCheck'
+    },
+    'ComputeInstance': {
+        'pulumi_type': 'gcp:compute/instance:Instance',
+        'get_id': get_compute_instance_id,
+    },
+    'ComputeInstanceGroup': {
+        'pulumi_type': 'gcp:compute/instanceGroup:InstanceGroup',
+        'get_id': get_compute_instance_id,
+    },
+    'ComputeInstanceTemplate': {
+        'pulumi_type': 'gcp:compute/instanceTemplate:InstanceTemplate',
+        'get_id': get_compute_instance_template_id,
+    },
+    'ComputeNetwork': {'pulumi_type': 'gcp:compute/network:Network'},
+    'ContainerCluster': {'pulumi_type': 'gcp:container/cluster:Cluster'},
+    'ContainerNodePool': {
+        'pulumi_type': 'gcp:container/nodePool:NodePool',
+        'get_id': get_container_node_pool_id,
+    },
+    'ComputeSnapshot': {'pulumi_type': 'gcp:compute/snapshot:Snapshot'},
+    'ComputeSubnetwork': {'pulumi_type': 'gcp:compute/subnetwork:Subnetwork'},
+    'ComputeTargetPool': {'pulumi_type': 'gcp:compute/targetPool:TargetPool'},
+    'IAMServiceAccount': {
+        'pulumi_type': 'gcp:serviceAccount/account:Account',
+        'get_id': get_iam_service_account_id,
+    },
+    'Service': {
+        'pulumi_type': 'gcp:projects/service:Service',
+        'get_id': get_service_id,
+    },
+    'StorageBucket': {
+        'pulumi_type': 'gcp:storage/bucket:Bucket',
+    },
 }
 
 
 def get_iam_project_id(k8s_resource):
-    return k8s_resource["spec"]["resourceRef"]["external"]
+    return k8s_resource['spec']['resourceRef']['external']
 
 
 iam_type_mappings = {
-    # "StorageBucket": {
-    #     "pulumi_type": "gcp:storage/bucketIAMPolicy:BucketIAMPolicy",
-    #     "get_id": get_storage_bucket_id,
-    # },
-    # "Project": {
-    #     "pulumi_type": "gcp:projects/iAMPolicy:IAMPolicy",
-    #     "get_id": get_iam_project_id,
-    # },
-    # "IAMPolicyMember": {
-    #     "pulumi_type": "gcp:projects/iAMMember:IAMMember",
-    #     "get_id": get_iam_policy_member_id,
-    # },
+    'StorageBucket': {
+        'pulumi_type': 'gcp:storage/bucketIAMPolicy:BucketIAMPolicy',
+        'get_id': get_storage_bucket_id,
+    },
+    'Project': {
+        'pulumi_type': 'gcp:projects/iAMPolicy:IAMPolicy',
+        'get_id': get_iam_project_id,
+    },
+    'IAMPolicyMember': {
+        'pulumi_type': 'gcp:projects/iAMMember:IAMMember',
+        'get_id': get_iam_policy_member_id,
+    },
     # Additional mappings would go here.
 }
 
@@ -204,28 +193,26 @@ def get_default_id(k8s_resource):
     region and zone if they can be determined"""
     id = ""
 
-    if "region" in k8s_resource["spec"]:
+    if 'region' in k8s_resource['spec']:
         id += f"{k8s_resource['spec']['region']}/"
 
-    if "location" in k8s_resource["spec"]:
+    if 'location' in k8s_resource['spec']:
         id += f"{k8s_resource['spec']['location']}/"
 
-    id += k8s_resource["spec"]["resourceID"]
+    id += k8s_resource['spec']['resourceID']
 
     if id == "":
-        id = k8s_resource["metadata"]["name"] + str(default_id_counter)
+        id = k8s_resource['metadata']['name'] + str(default_id_counter)
         default_id_counter += 1
 
     return id
 
 
 def k8s_resource_to_pulumi_resource(k8s_resource):
-    k8s_type = k8s_resource["kind"]
+    k8s_type = k8s_resource['kind']
 
-    if k8s_type == "Project":
-        print(
-            "Type 'Project' will be skipped as we import with a project already defined."
-        )
+    if k8s_type == 'Project':
+        print("Type 'Project' will be skipped as we import with a project already defined.")
         return None
 
     # In the Google Classic provider, IAM resources exist for each resource to
@@ -233,42 +220,35 @@ def k8s_resource_to_pulumi_resource(k8s_resource):
     # do an additional mapping to get from an IAM resource in the YAML export to
     # a Pulumi type:
     if k8s_type == "IAMPolicy" or k8s_type == "IAMPolicyMember":
-        if "spec" not in k8s_resource:
+        if 'spec' not in k8s_resource:
             print(
-                "Expected a key 'spec' in a resource of type 'IAMPolicy', but did not find it. Skipping."
-            )
+                "Expected a key 'spec' in a resource of type 'IAMPolicy', but did not find it. Skipping.")
             return None
 
-        if "resourceRef" not in k8s_resource["spec"]:
-            print(
-                "Expected a key 'spec.resourceRef' in a resource of type 'IAMPolicy', but did not find it. Skipping."
-            )
+        if 'resourceRef' not in k8s_resource['spec']:
+            print("Expected a key 'spec.resourceRef' in a resource of type 'IAMPolicy', but did not find it. Skipping.")
             return None
 
-        if "kind" not in k8s_resource["spec"]["resourceRef"]:
-            print(
-                "Expected a key 'spec.resourceRef.kind' in a resource of type 'IAMPolicy', but did not find it. Skipping."
-            )
+        if 'kind' not in k8s_resource['spec']['resourceRef']:
+            print("Expected a key 'spec.resourceRef.kind' in a resource of type 'IAMPolicy', but did not find it. Skipping.")
             return None
 
-        ref_type = k8s_resource["spec"]["resourceRef"]["kind"]
+        ref_type = k8s_resource['spec']['resourceRef']['kind']
         if ref_type not in iam_type_mappings:
             print(
-                f"Could not find a mapping to a Pulumi type for an IAMPolicy for resource type '{ref_type}'. Skipping."
-            )
+                f"Could not find a mapping to a Pulumi type for an IAMPolicy for resource type '{ref_type}'. Skipping.")
             return None
 
         return {
-            "type": iam_type_mappings[ref_type]["pulumi_type"],
-            "name": k8s_resource["metadata"]["name"],
-            "id": iam_type_mappings[ref_type]["get_id"](k8s_resource),
+            'type': iam_type_mappings[ref_type]['pulumi_type'],
+            'name': k8s_resource['metadata']['name'],
+            'id': iam_type_mappings[ref_type]['get_id'](k8s_resource),
         }
 
     # The 'disabled' attribute is not specified unless it's true (in our sample input data, at least).
-    if k8s_type == "IAMServiceAccount" and "disabled" in k8s_resource["spec"]:
+    if k8s_type == 'IAMServiceAccount' and 'disabled' in k8s_resource['spec']:
         print(
-            f"IAMServiceAccount '{k8s_resource['metadata']['name']}' is inactive and will be skipped."
-        )
+            f"IAMServiceAccount '{k8s_resource['metadata']['name']}' is inactive and will be skipped.")
         return None
 
     # if k8s_type == 'Service' and k8s_resource['apiVersion'].startswith('serviceusage'):
@@ -276,17 +256,17 @@ def k8s_resource_to_pulumi_resource(k8s_resource):
     #     return None
 
     if k8s_type in resource_type_mappings:
-        if "get_id" in resource_type_mappings[k8s_type]:
+        if 'get_id' in resource_type_mappings[k8s_type]:
             return {
-                "type": resource_type_mappings[k8s_type]["pulumi_type"],
-                "name": k8s_resource["metadata"]["name"],
-                "id": resource_type_mappings[k8s_type]["get_id"](k8s_resource),
+                'type': resource_type_mappings[k8s_type]['pulumi_type'],
+                'name': k8s_resource['metadata']['name'],
+                'id': resource_type_mappings[k8s_type]['get_id'](k8s_resource),
             }
 
         return {
-            "type": resource_type_mappings[k8s_type]["pulumi_type"],
-            "name": k8s_resource["metadata"]["name"],
-            "id": get_default_id(k8s_resource),
+            'type': resource_type_mappings[k8s_type]['pulumi_type'],
+            'name': k8s_resource['metadata']['name'],
+            'id': get_default_id(k8s_resource),
         }
 
     # TODO: As a future improvement, try auto-mapping from the K8s type to the
@@ -318,7 +298,7 @@ for doc in docs:
     pulumi_resource = k8s_resource_to_pulumi_resource(doc)
 
     if pulumi_resource is None:
-        k8s_resource_type = doc["kind"]
+        k8s_resource_type = doc['kind']
 
         if k8s_resource_type in skipped_resources:
             skipped_resources[k8s_resource_type] += 1
@@ -330,9 +310,9 @@ for doc in docs:
     ensure_unique_name(pulumi_resource)
     resources.append(pulumi_resource)
 
-with open(args.outfile, "w") as outfile:
+with open(args.outfile, 'w') as outfile:
     outfile_object = {
-        "resources": resources,
+        'resources': resources,
     }
     outfile.write(json.dumps(outfile_object, indent=2))
 
