@@ -10,13 +10,14 @@ This code should be considered proof-of-concept. A small percentage of Goolge Cl
 1. Export your resources to a YAML file, e.g.:
 
     ```bash
-    config-connector bulk-export --project YOUR-PROJECT-ID --output config-connector-export.yaml --iam-format policymember --on-error continue
+    config-connector bulk-export --project YOUR-GOOGLE-CLOUD-PROJECT-ID --output config-connector-export.yaml --iam-format policymember --on-error continue
     ```
 
 1. Clone this repository, initialize any virtual environments, download dependencies, and run the following command:
 
     ```bash
-    cd config-connector-transform && ython3 main.py -i path/to/config-connector-export.yaml -o path/to/pulumi/target/project/pulumi-import.json -p YOUR-PROJECT-ID
+    cd config-connector-transform
+    python3 main.py -i path/to/config-connector-export.yaml -o path/to/pulumi/target/project/pulumi-import.json -p YOUR-GOOGLE-CLOUD-PROJECT-ID
     ```
 
 1. In your Pulumi project, bulk import the resources, e.g.:
