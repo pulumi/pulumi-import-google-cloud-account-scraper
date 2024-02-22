@@ -103,7 +103,7 @@ resource_type_mappings = {
         'pulumi_type': 'gcp:compute/snapshot:Snapshot'
     },
     'IAMServiceAccount': {
-        'pulumi_type': 'gcp:serviceAccount/account:Account',
+        'pulumi_type': 'gcp:serviceaccount/account:Account',
         'get_id': get_iam_service_account_id,
     },
     # TODO: These fail import with e.g. 'Preview failed: resource
@@ -163,6 +163,15 @@ def k8s_resource_to_pulumi_resource(k8s_resource):
     if k8s_type == 'Project':
         print("Type 'Project' will be skipped as we import with a project already defined.")
         return None
+
+    # Regional and global forwarding rules are different resources in the Google
+    # Cloud provider, but are mapped to the same resource in config-connector.
+    if k8s_type == 'ComputeForwardingRule' and k8s_resource['spec']['location'] == 'global':
+        return {
+            'type': 'gcp:compute/globalForwardingRule:GlobalForwardingRule',
+            'name': k8s_resource['metadata']['name'],
+            'id': k8s_resource['metadata']['name'],
+        }
 
     # In the Google Classic provider, IAM resources exist for each resource to
     # which the permissions apply (e.g. BucketIAMPolicy), therefore we have to
@@ -266,5 +275,5 @@ with open(args.outfile, 'w') as outfile:
     outfile.write(json.dumps(outfile_object, indent=2))
 
 
-print(f"Skipped resources:")
+print("Skipped resources:")
 pprint.pp(skipped_resources)

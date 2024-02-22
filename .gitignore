@@ -106,3 +106,7 @@ dist
 venv
 config-connector-transform/pulumi-import.json
 config-connector-transform/sample-output.yaml
+
+# This is the directory typically used for demos
+infra
+config-connector-export.yaml
