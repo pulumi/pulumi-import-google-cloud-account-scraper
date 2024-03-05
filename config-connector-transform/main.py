@@ -41,6 +41,7 @@ with open(args.infile, 'r') as ymlfile:
 skipped_resources = {}
 converted_resources = {}
 resources = []
+default_id_counter = 0
 
 # TODO: Move these to inline lambdas once we're confident we never need more
 # than in inline expression:
@@ -50,8 +51,33 @@ def get_logging_log_sink_id(k8s_resource):
     return f"projects/{k8s_resource['spec']['projectRef']['external']}/sinks/{k8s_resource['metadata']['name']}"
 
 
+def get_compute_disk_id(k8s_resource):
+    return f"{k8s_resource['spec']['projectRef']['external']}/{k8s_resource['spec']['location']}/{k8s_resource['metadata']['name']}"
+
+
 def get_compute_instance_id(k8s_resource):
     return f"{k8s_resource['metadata']['annotations']['cnrm.cloud.google.com/project-id']}/{k8s_resource['spec']['zone']}/{k8s_resource['metadata']['name']}"
+
+
+def get_compute_instance_template_id(k8s_resource):
+    # return f"{k8s_resource['metadata']['annotations']['cnrm.cloud.google.com/project-id']}/{k8s_resource['spec']['region']}/{k8s_resource['spec']['resourceID']}"
+    return f"{k8s_resource['spec']['resourceID']}"
+
+
+def get_container_node_pool_id(k8s_resource):
+    project_id = k8s_resource["metadata"]["annotations"][
+        "cnrm.cloud.google.com/project-id"
+    ]
+    location = k8s_resource["spec"]["location"]
+    cluster_name = k8s_resource["spec"]["clusterRef"]["external"]
+    node_pool_name = k8s_resource["metadata"]["name"]
+
+    return (
+        f"projects/{project_id}/"
+        f"locations/{location}/"
+        f"clusters/{cluster_name}/"
+        f"nodePools/{node_pool_name}"
+    )
 
 
 def get_storage_bucket_id(k8s_resource):
@@ -59,12 +85,40 @@ def get_storage_bucket_id(k8s_resource):
 
 
 def get_iam_service_account_id(k8s_resource):
-    return f"{k8s_resource['spec']['resourceID']}@{k8s_resource['metadata']['annotations']['cnrm.cloud.google.com/project-id']}.iam.gserviceaccount.com"
+    if "spec" in k8s_resource and "resourceRef" in k8s_resource["spec"]:
+        return k8s_resource["spec"]["resourceRef"]["external"]
+    else:
+        return f"{k8s_resource['spec']['resourceID']}@{k8s_resource['metadata']['annotations']['cnrm.cloud.google.com/project-id']}.iam.gserviceaccount.com"
+
+
+def get_iam_policy_member_id(k8s_resource):
+    project_name = k8s_resource["spec"]["resourceRef"]["external"]
+    role = k8s_resource["spec"]["role"]
+    member = k8s_resource["spec"]["member"]
+
+    return f"{project_name} {role} {member}"
 
 
 def get_service_id(k8s_resource):
     return f"{args.project}/{k8s_resource['metadata']['name']}"
 
+
+# TODO: TEMPORARY!! This is to simplify down the setup and hunt down the bugs in the `pulumi up` operation
+#   These are confirmed to have issues
+#   All of these should be in `resurce_type_mappings` below
+broken_types = {
+    # TODO: These fail import with e.g. 'Preview failed: resource
+    # 'projects/438338752289/sinks/a-default' does not exist'. We need to figure
+    # out what actual cloud resources these represent and figure out whehter
+    # they actually need to be imported.
+    'ComputeBackendService': {
+        'pulumi_type': 'gcp:compute/backendService:BackendService',
+    },
+    'LoggingLogSink': {
+        'pulumi_type': 'gcp:logging/projectSink:ProjectSink',
+        'get_id': get_logging_log_sink_id,
+    },
+}
 
 resource_type_mappings = {
     'ArtifactRegistryRepository': {
@@ -72,55 +126,47 @@ resource_type_mappings = {
     },
     'ComputeDisk': {
         'pulumi_type': 'gcp:compute/disk:Disk',
+        'get_id': get_compute_disk_id,
     },
-    'ComputeFirewall': {
-        'pulumi_type': 'gcp:compute/firewall:Firewall'
+    'ComputeFirewall': {'pulumi_type': 'gcp:compute/firewall:Firewall'},
+    'ComputeForwardingRule': {
+        'pulumi_type': 'gcp:compute/forwardingRule:ForwardingRule'
+    },
+    'ComputeHTTPHealthCheck': {
+        'pulumi_type': 'gcp:compute/httpHealthCheck:HttpHealthCheck'
     },
     'ComputeInstance': {
         'pulumi_type': 'gcp:compute/instance:Instance',
         'get_id': get_compute_instance_id,
     },
-    'ComputeForwardingRule': {
-        'pulumi_type': 'gcp:compute/forwardingRule:ForwardingRule'
-    },
-    'ComputeNetwork': {
-        'pulumi_type': 'gcp:compute/network:Network'
-    },
-    'ComputeHTTPHealthCheck': {
-        'pulumi_type': 'gcp:compute/httpHealthCheck:HttpHealthCheck'
-    },
     'ComputeInstanceGroup': {
         'pulumi_type': 'gcp:compute/instanceGroup:InstanceGroup',
         'get_id': get_compute_instance_id,
     },
-    'ComputeSubnetwork': {
-        'pulumi_type': 'gcp:compute/subnetwork:Subnetwork'
+    'ComputeInstanceTemplate': {
+        'pulumi_type': 'gcp:compute/instanceTemplate:InstanceTemplate',
+        'get_id': get_compute_instance_template_id,
     },
-    'ComputeTargetPool': {
-        'pulumi_type': 'gcp:compute/targetPool:TargetPool'
+    'ComputeNetwork': {'pulumi_type': 'gcp:compute/network:Network'},
+    'ContainerCluster': {'pulumi_type': 'gcp:container/cluster:Cluster'},
+    'ContainerNodePool': {
+        'pulumi_type': 'gcp:container/nodePool:NodePool',
+        'get_id': get_container_node_pool_id,
     },
-    'ComputeSnapshot': {
-        'pulumi_type': 'gcp:compute/snapshot:Snapshot'
-    },
+    'ComputeSnapshot': {'pulumi_type': 'gcp:compute/snapshot:Snapshot'},
+    'ComputeSubnetwork': {'pulumi_type': 'gcp:compute/subnetwork:Subnetwork'},
+    'ComputeTargetPool': {'pulumi_type': 'gcp:compute/targetPool:TargetPool'},
     'IAMServiceAccount': {
         'pulumi_type': 'gcp:serviceaccount/account:Account',
         'get_id': get_iam_service_account_id,
     },
-    # TODO: These fail import with e.g. 'Preview failed: resource
-    # 'projects/438338752289/sinks/a-default' does not exist'. We need to figure
-    # out what actual cloud resources these represent and figure out whehter
-    # they actually need to be imported.
-    # 'LoggingLogSink': {
-    #     'pulumi_type': 'gcp:logging/projectSink:ProjectSink',
-    #     'get_id': get_logging_log_sink_id,
-    # },
     'Service': {
         'pulumi_type': 'gcp:projects/service:Service',
         'get_id': get_service_id,
     },
     'StorageBucket': {
         'pulumi_type': 'gcp:storage/bucket:Bucket',
-    }
+    },
 }
 
 
@@ -131,12 +177,20 @@ def get_iam_project_id(k8s_resource):
 iam_type_mappings = {
     'StorageBucket': {
         'pulumi_type': 'gcp:storage/bucketIAMPolicy:BucketIAMPolicy',
-        'get_id': get_storage_bucket_id
+        'get_id': get_storage_bucket_id,
     },
     'Project': {
         'pulumi_type': 'gcp:projects/iAMPolicy:IAMPolicy',
-        'get_id': get_iam_project_id
-    }
+        'get_id': get_iam_project_id,
+    },
+    'IAMPolicyMember': {
+        'pulumi_type': 'gcp:projects/iAMMember:IAMMember',
+        'get_id': get_iam_policy_member_id,
+    },
+    'IAMServiceAccount': {
+        'pulumi_type': 'gcp:serviceAccount/account:Account',
+        'get_id': get_iam_service_account_id,
+    },
     # Additional mappings would go here.
 }
 
@@ -145,6 +199,7 @@ def get_default_id(k8s_resource):
     """Returns the most common form of an ID of a Google Cloud resource, adding
     region and zone if they can be determined"""
     id = ""
+    global default_id_counter
 
     if 'region' in k8s_resource['spec']:
         id += f"{k8s_resource['spec']['region']}/"
@@ -152,7 +207,11 @@ def get_default_id(k8s_resource):
     if 'location' in k8s_resource['spec']:
         id += f"{k8s_resource['spec']['location']}/"
 
-    id += k8s_resource['spec']['resourceID']
+    id += k8s_resource['spec']['resourceID'] if 'resourceID' in k8s_resource['spec'] else ""
+
+    if id == "":
+        id = k8s_resource['metadata']['name'] + str(default_id_counter)
+        default_id_counter += 1
 
     return id
 
@@ -177,7 +236,7 @@ def k8s_resource_to_pulumi_resource(k8s_resource):
     # which the permissions apply (e.g. BucketIAMPolicy), therefore we have to
     # do an additional mapping to get from an IAM resource in the YAML export to
     # a Pulumi type:
-    if k8s_type == "IAMPolicy":
+    if k8s_type == "IAMPolicy" or k8s_type == "IAMPolicyMember":
         if 'spec' not in k8s_resource:
             print(
                 "Expected a key 'spec' in a resource of type 'IAMPolicy', but did not find it. Skipping.")
