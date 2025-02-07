@@ -237,21 +237,6 @@ def k8s_resource_to_pulumi_resource(k8s_resource):
     return None
 
 
-def ensure_unique_name(pulumi_resource):
-    """Ensures that each resource has a unique name. `pulumi import` will fail
-    if multiple resources have the same name due to
-    https://github.com/pulumi/pulumi/issues/6032"""
-
-    base_name = pulumi_resource["name"]
-    counter = 1
-
-    while any(
-        resource.get("name") == pulumi_resource["name"] for resource in resources
-    ):
-        pulumi_resource["name"] = f"{base_name}-{counter}"
-        counter += 1
-
-
 for doc in docs:
     pulumi_resource = k8s_resource_to_pulumi_resource(doc)
 
@@ -265,7 +250,6 @@ for doc in docs:
 
         continue
 
-    ensure_unique_name(pulumi_resource)
     resources.append(pulumi_resource)
 
 with open(args.outfile, 'w') as outfile:
